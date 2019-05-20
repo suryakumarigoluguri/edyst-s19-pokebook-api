@@ -32,12 +32,6 @@ class User(db.Model):
     image = db.Column(db.String,default="null")
     following = db.Column(db.Boolean,default=False)
 
-    #followed = db.relationship(
-        #'User', secondary=followers,
-        #primaryjoin=(followers.c.follower_id == id),
-        #secondaryjoin=(followers.c.followed_id == id),
-        #backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
-
     def __init__(self,username,email,password):
         self.username=username
         self.email=email
@@ -73,28 +67,18 @@ class Pokemon(db.Model):
     name = db.Column(db.String, unique=True)
     sprite = db.Column(db.String, unique=True)
     description = db.Column(db.String)
-    #createdAt = db.Column(db.String,default="null")
-    #updatedAt = db.Column(db.String,default="null")
     createdAt=Column(DateTime,default=datetime.datetime.utcnow)
     updatedAt=Column(DateTime,default=datetime.datetime.utcnow)
     favourited = db.Column(db.Boolean,default=False)
     favouritesCount = db.Column(db.Integer,default=0)
     user_id=db.Column(db.Integer)
-    #username = db.Column(db.String)
-    #bio = db.Column(db.String)
-    #image = db.Column(db.String)
-    #following = db.Column(db.Boolean)
-
+    
     def __init__(self, name, sprite, description,user_id):
         self.name = name
         self.sprite = sprite
         self.description = description
         self.user_id=user_id
-        #self.username = username   #add user id as foreign
-        #self.bio = bio
-        #self.image = image
-        #self.following = following
-
+        
 class PokemonSchema(ma.Schema):
     class Meta:
         # Fields to expose
@@ -209,7 +193,6 @@ def add_user():
 @jwt_required
 def get_user():
     email=get_jwt_identity()
-    #return(email)
     urdata=User.query.filter(User.email==email).first()
     ur={"user":{"id":urdata.id,"email":urdata.email,"username":urdata.username,"bio":urdata.bio,"image":urdata.image,"following":urdata.following}}
     return json.dumps(ur)
